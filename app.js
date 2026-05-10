@@ -46,6 +46,14 @@ const VIDEOS = [
   { id: '977662018340035',    platform: 'facebook', title: '優勢作品017《泱泱的優勢故事》', url: 'https://www.facebook.com/watch/?v=977662018340035' }
 ];
 
+const FB_IDS = []; // Array to be populated if needed
+
+// ONE TIME MIGRATION: Clear old manual likes so the real fetched data from demoFB will show up
+if (!localStorage.getItem('cleared_fb_once_v3')) {
+  localStorage.removeItem('manual_fb_likes');
+  localStorage.setItem('cleared_fb_once_v3', 'true');
+}
+
 // State
 let videoData = VIDEOS.map(v => ({ ...v, likes: null, title: v.title || '', thumb: '', status: 'pending' }));
 let ytApiKey = localStorage.getItem('yt_api_key') || '';
