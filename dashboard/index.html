@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>影片按讚數爬蟲控制台</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f; --card: rgba(255,255,255,0.04); --border: rgba(255,255,255,0.08);
+      --text: #f1f5f9; --muted: #475569; --accent: #6366f1; --success: #10b981;
+      --yt: #ff4444; --fb: #1877f2; --warning: #f59e0b;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter','Noto Sans TC',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+    h1 { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg,#f1f5f9,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.25rem; }
+    .subtitle { color: var(--muted); font-size: 0.82rem; margin-bottom: 2rem; }
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .status-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; }
+    .status-card .label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .status-card .value { font-size: 1.2rem; font-weight: 700; }
+    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .table-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 10px 14px; font-size: 0.68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.88rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .rank { display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-weight:800;font-size:0.78rem; }
+    .r1 { background: linear-gradient(135deg,#fbbf24,#f59e0b); color: #1a1000; }
+    .r2 { background: linear-gradient(135deg,#94a3b8,#64748b); color: #fff; }
+    .r3 { background: linear-gradient(135deg,#cd7c3a,#92400e); color: #fff; }
+    .rn { background: rgba(255,255,255,0.07); color: var(--muted); }
+    .badge { display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.7rem;font-weight:600; }
+    .yt { background:rgba(255,68,68,0.12);color:var(--yt);border:1px solid rgba(255,68,68,0.2); }
+    .fb { background:rgba(24,119,242,0.12);color:var(--fb);border:1px solid rgba(24,119,242,0.2); }
+    .s-live { color: var(--success); } .s-error { color: #ef4444; } .s-warn { color: var(--warning); }
+    .likes { font-weight: 800; font-variant-numeric: tabular-nums; }
+    .loading { text-align: center; padding: 3rem; color: var(--muted); }
+    .filter-row { display:flex;gap:0.5rem;flex-wrap:wrap; }
+    .filter-btn { background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:4px 14px;font-family:inherit;font-size:0.75rem;cursor:pointer;transition:all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { background:var(--accent);border-color:var(--accent);color:#fff; }
+    @media(max-width:600px){.container{padding:1rem}.table-header{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:0.25rem;">
+    <div>
+      <h1>影片按讚數爬蟲報告</h1>
+      <p class="subtitle">自動從 GitHub 讀取最新的爬取結果</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div>
+        <h2 style="font-size:1rem;font-weight:700;">按讚數排行榜</h2>
+        <p id="lastFetchTime" style="font-size:0.75rem;color:var(--muted);margin-top:3px;">資料時間：載入中...</p>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+        <button class="filter-btn" onclick="setFilter('youtube',this)">YouTube</button>
+        <button class="filter-btn" onclick="setFilter('facebook',this)">Facebook</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>排名</th><th>平台</th><th>影片標題</th><th style="text-align:right;">按讚數</th><th style="text-align:center;">狀態</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"><tr><td colspan="5" class="loading">⏳ 載入中...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let allData = [];
+let currentFilter = 'all';
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const filtered = currentFilter === 'all' ? allData : allData.filter(v => v.platform === currentFilter);
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="5" class="loading">無資料</td></tr>'; return; }
+
+  tbody.innerHTML = filtered.map((v, i) => {
+    const rank = i + 1;
+    const rc = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : 'rn';
+    const pl = v.platform === 'youtube'
+      ? '<span class="badge yt">▶ YouTube</span>'
+      : '<span class="badge fb">f Facebook</span>';
+    const likes = v.likes != null ? v.likes.toLocaleString() : '—';
+    const sc = v.status === 'live' ? 's-live' : v.status === 'error' ? 's-error' : 's-warn';
+    const sl = v.status === 'live' ? '✓ 成功' : v.status === 'error' ? '✗ 錯誤' : '⚠ ' + v.status;
+    const title = (v.title || v.id).replace(/</g,'&lt;');
+    return \`<tr>
+      <td><span class="rank \${rc}">\${rank}</span></td>
+      <td>\${pl}</td>
+      <td><a href="\${v.url}" target="_blank" style="color:#818cf8;text-decoration:none;">\${title}</a></td>
+      <td style="text-align:right;"><span class="likes">👍 \${likes}</span></td>
+      <td style="text-align:center;"><span class="\${sc}">\${sl}</span></td>
+    </tr>\`;
+  }).join('');
+}
+
+async function loadResults() {
+  try {
+    // 從 GitHub 讀取 json 檔案
+    const r = await fetch('https://raw.githubusercontent.com/shared-reading/vote/master/data/latest.json?t=' + Date.now());
+    if (!r.ok) throw new Error('Data not found');
+    const d = await r.json();
+    if (d.results) {
+      allData = [...d.results].sort((a,b) => (b.likes ?? -1) - (a.likes ?? -1));
+      renderTable();
+      if (d.scrapedAt) {
+        document.getElementById('lastFetchTime').textContent = '資料時間：' + new Date(d.scrapedAt).toLocaleString('zh-TW');
+      }
+    }
+  } catch(e) {
+    document.getElementById('tableBody').innerHTML = \`<tr><td colspan="5" class="loading">⚠️ 尚無資料或讀取失敗。請確保自動爬蟲有將 data/latest.json 上傳至 GitHub。(\${e.message})</td></tr>\`;
+    document.getElementById('lastFetchTime').textContent = '資料時間：—';
+  }
+}
+
+loadResults();
+</script>
+</body>
+</html>
