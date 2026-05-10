@@ -165,10 +165,12 @@ function showDemoData() {
       v.status = 'demo';
     } else {
       const idx = i - 19;
-      v.likes = demoFB[idx];
-      v.title = v.title || fbTitles[idx];
-      v.thumb = '';
-      v.status = 'demo';
+      if (v.status !== 'manual') {
+        v.likes = demoFB[idx];
+        v.title = v.title || fbTitles[idx];
+        v.thumb = '';
+        v.status = 'demo';
+      }
     }
   });
 
