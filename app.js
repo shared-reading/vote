@@ -439,13 +439,13 @@ function clearAllManual() {
 // ============================================================
 function renderTable() {
   const sorted = getSortedFiltered();
-  const maxLikes = Math.max(...videoData.filter(v => v.likes != null).map(v => v.likes), 1);
+  const totalLikes = videoData.filter(v => v.likes != null).reduce((sum, v) => sum + v.likes, 0) || 1;
   const tbody = document.getElementById('videoTableBody');
   tbody.innerHTML = '';
 
   sorted.forEach((v, idx) => {
     const globalRank = videoData.filter(x => x.likes != null).sort((a,b) => b.likes - a.likes).findIndex(x => x.id === v.id) + 1;
-    const row = createTableRow(v, globalRank || (idx + 1), maxLikes, idx);
+    const row = createTableRow(v, globalRank || (idx + 1), totalLikes, idx);
     tbody.appendChild(row);
   });
 }
@@ -453,18 +453,18 @@ function renderTable() {
 function renderTableRow(video) {
   // Live update a single row if it exists
   const existing = document.getElementById(`row-${video.id}`);
-  const maxLikes = Math.max(...videoData.filter(v => v.likes != null).map(v => v.likes), 1);
+  const totalLikes = videoData.filter(v => v.likes != null).reduce((sum, v) => sum + v.likes, 0) || 1;
   const sorted = getSortedFiltered();
   const globalRank = videoData.filter(x => x.likes != null).sort((a,b) => b.likes - a.likes).findIndex(x => x.id === video.id) + 1;
 
   if (existing) {
     const idx = sorted.findIndex(v => v.id === video.id);
-    const newRow = createTableRow(video, globalRank, maxLikes, idx);
+    const newRow = createTableRow(video, globalRank, totalLikes, idx);
     existing.replaceWith(newRow);
   }
 }
 
-function createTableRow(v, rank, maxLikes, animIdx) {
+function createTableRow(v, rank, totalLikes, animIdx) {
   const tr = document.createElement('tr');
   tr.id = `row-${v.id}`;
   tr.style.animationDelay = `${animIdx * 30}ms`;
@@ -472,7 +472,7 @@ function createTableRow(v, rank, maxLikes, animIdx) {
   const isYT = v.platform === 'youtube';
   const likes = v.likes ?? '—';
   const likesNum = v.likes ?? 0;
-  const barPct = maxLikes > 0 ? (likesNum / maxLikes * 100).toFixed(1) : 0;
+  const barPct = totalLikes > 0 ? (likesNum / totalLikes * 100).toFixed(1) : 0;
 
   const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
 

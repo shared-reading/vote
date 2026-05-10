@@ -2,3 +2,5 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+# 後端爬蟲服務（含 API 金鑰，不推上 GitHub）
+auto-scraper/
