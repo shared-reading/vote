@@ -25,29 +25,29 @@ const VIDEOS = [
   { id: 'yTqKF_qVt7M', platform: 'youtube', url: 'https://www.youtube.com/watch?v=yTqKF_qVt7M' },
   { id: '9ntG2XnkqJY', platform: 'youtube', url: 'https://www.youtube.com/watch?v=9ntG2XnkqJY' },
   // Facebook (19)
-  { id: '856866830084535',    platform: 'facebook', url: 'https://www.facebook.com/watch/?v=856866830084535' },
-  { id: '1488953016259244',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1488953016259244' },
-  { id: '1285159373275569',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1285159373275569' },
-  { id: '1567946188453641',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1567946188453641' },
-  { id: '1314825210601008',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1314825210601008' },
-  { id: '1543762180760794',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1543762180760794' },
-  { id: '950131014306965',    platform: 'facebook', url: 'https://www.facebook.com/watch/?v=950131014306965' },
-  { id: '919116667843631',    platform: 'facebook', url: 'https://www.facebook.com/watch/?v=919116667843631' },
-  { id: '815963958258375',    platform: 'facebook', url: 'https://www.facebook.com/watch/?v=815963958258375' },
-  { id: '27028009433505681',  platform: 'facebook', url: 'https://www.facebook.com/watch/?v=27028009433505681' },
-  { id: '1135913742050244',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1135913742050244' },
-  { id: '1518584433267296',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1518584433267296' },
-  { id: '1671804067274374',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1671804067274374' },
-  { id: '1474589356967682',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=1474589356967682' },
-  { id: '2469760090162073',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=2469760090162073' },
-  { id: '2214258169395976',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=2214258169395976' },
-  { id: '3082125081980378',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=3082125081980378' },
-  { id: '4259382867659859',   platform: 'facebook', url: 'https://www.facebook.com/watch/?v=4259382867659859' },
-  { id: '977662018340035',    platform: 'facebook', url: 'https://www.facebook.com/watch/?v=977662018340035' },
+  { id: '856866830084535',    platform: 'facebook', title: '優勢作品010《早產兒安安的成長日記：愛與希望的奇蹟之旅》', url: 'https://www.facebook.com/watch/?v=856866830084535' },
+  { id: '1488953016259244',   platform: 'facebook', title: '優勢作品001《宇我同行. 跨出心視野》', url: 'https://www.facebook.com/watch/?v=1488953016259244' },
+  { id: '1285159373275569',   platform: 'facebook', title: '優勢作品002《不放棄的我們》', url: 'https://www.facebook.com/watch/?v=1285159373275569' },
+  { id: '1567946188453641',   platform: 'facebook', title: '優勢作品013《以優勢為鑰，啟動特教生學習動機與未來發展》', url: 'https://www.facebook.com/watch/?v=1567946188453641' },
+  { id: '1314825210601008',   platform: 'facebook', title: '優勢作品015《恩恩的日常～優勢卡實踐》', url: 'https://www.facebook.com/watch/?v=1314825210601008' },
+  { id: '1543762180760794',   platform: 'facebook', title: '優勢作品012《我想自己走向你》', url: 'https://www.facebook.com/watch/?v=1543762180760794' },
+  { id: '950131014306965',    platform: 'facebook', title: '優勢作品014《「好力量」我與我的輔具之路-我的優勢卡》', url: 'https://www.facebook.com/watch/?v=950131014306965' },
+  { id: '919116667843631',    platform: 'facebook', title: '優勢作品011《2025兒童我的優勢卡與小書共讀兩日親子課程》', url: 'https://www.facebook.com/watch/?v=919116667843631' },
+  { id: '815963958258375',    platform: 'facebook', title: '優勢作品007《看見優勢看見可能_勇敢小超人融合參與行動紀錄》', url: 'https://www.facebook.com/watch/?v=815963958258375' },
+  { id: '27028009433505681',  platform: 'facebook', title: '優勢作品003《音樂伴我的優勢之路》', url: 'https://www.facebook.com/watch/?v=27028009433505681' },
+  { id: '1135913742050244',   platform: 'facebook', title: '優勢作品004《從優勢出發，讓參與發生》', url: 'https://www.facebook.com/watch/?v=1135913742050244' },
+  { id: '1518584433267296',   platform: 'facebook', title: '優勢作品005《週四優勢日-優勢卡我與他》', url: 'https://www.facebook.com/watch/?v=1518584433267296' },
+  { id: '1671804067274374',   platform: 'facebook', title: '優勢作品016《看見樺樺、看見希望》', url: 'https://www.facebook.com/watch/?v=1671804067274374' },
+  { id: '1474589356967682',   platform: 'facebook', title: '優勢作品018《我是小熊，我熊讚》', url: 'https://www.facebook.com/watch/?v=1474589356967682' },
+  { id: '2469760090162073',   platform: 'facebook', title: '優勢作品006《Lilting的貓頭鷹畫展》', url: 'https://www.facebook.com/watch/?v=2469760090162073' },
+  { id: '2214258169395976',   platform: 'facebook', title: '優勢作品008《一張優勢卡帶來的改變》', url: 'https://www.facebook.com/watch/?v=2214258169395976' },
+  { id: '3082125081980378',   platform: 'facebook', title: '優勢作品019《澎湖女孩》', url: 'https://www.facebook.com/watch/?v=3082125081980378' },
+  { id: '4259382867659859',   platform: 'facebook', title: '優勢作品009《看見優勢，大人小孩全身都亮晶晶！》', url: 'https://www.facebook.com/watch/?v=4259382867659859' },
+  { id: '977662018340035',    platform: 'facebook', title: '優勢作品017《泱泱的優勢故事》', url: 'https://www.facebook.com/watch/?v=977662018340035' }
 ];
 
 // State
-let videoData = VIDEOS.map(v => ({ ...v, likes: null, title: '', thumb: '', status: 'pending' }));
+let videoData = VIDEOS.map(v => ({ ...v, likes: null, title: v.title || '', thumb: '', status: 'pending' }));
 let ytApiKey = localStorage.getItem('yt_api_key') || '';
 let fbToken  = localStorage.getItem('fb_page_token') || '';
 let rankChart = null;
@@ -166,7 +166,7 @@ function showDemoData() {
     } else {
       const idx = i - 19;
       v.likes = demoFB[idx];
-      v.title = fbTitles[idx];
+      v.title = v.title || fbTitles[idx];
       v.thumb = '';
       v.status = 'demo';
     }
