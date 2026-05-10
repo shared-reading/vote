@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>影片按讚數即時儀表板</title>
+  <meta name="description" content="即時監控 YouTube 與 Facebook 影片按讚數、排名分析儀表板" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Background particles -->
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="18" stroke="url(#logoGrad)" stroke-width="2.5"/>
+            <path d="M14 20l4 4 8-8" stroke="url(#logoGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1 class="site-title">影片按讚儀表板</h1>
+          <p class="site-subtitle">Video Likes Analytics Dashboard</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="live-indicator">
+          <span class="live-dot"></span>
+          <span class="live-text">LIVE</span>
+        </div>
+        <div class="last-update-info">
+          <span class="update-label">上次更新</span>
+          <span class="update-time" id="lastUpdateTime">—</span>
+        </div>
+        <button class="refresh-btn" id="refreshBtn" onclick="fetchAllData()">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/></svg>
+          刷新資料
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- API Key Setup Banner -->
+  <div class="api-banner" id="apiBanner">
+    <div class="api-banner-inner">
+      <div class="api-banner-icon">▶</div>
+      <div class="api-banner-text">
+        <strong>YouTube API 金鑰</strong>
+        <span>Data API v3，取得 19 支 YouTube 影片按讚數</span>
+      </div>
+      <div class="api-input-area">
+        <input type="password" id="apiKeyInput" class="api-key-input" placeholder="AIzaSy..." autocomplete="off" />
+        <button class="api-save-btn yt-btn" onclick="saveApiKey()">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+          套用
+        </button>
+      </div>
+      <div class="api-divider">｜</div>
+      <div class="api-banner-icon fb-icon">f</div>
+      <div class="api-banner-text">
+        <strong>Facebook Page Token</strong>
+        <span>長效型 Page Access Token，取得 19 支 FB 影片按讚數</span>
+      </div>
+      <div class="api-input-area">
+        <input type="password" id="fbTokenInput" class="api-key-input" placeholder="EAAxxxxxx..." autocomplete="off" />
+        <button class="api-save-btn fb-btn" onclick="saveFbToken()">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
+          套用
+        </button>
+      </div>
+      <button class="api-banner-close" onclick="closeBanner()">✕</button>
+    </div>
+    <div class="api-hint">
+      ▶ YouTube：<a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a> → 建立 API 金鑰 → 啟用 YouTube Data API v3
+      &nbsp;｜&nbsp;
+      f Facebook：<a href="https://developers.facebook.com/tools/explorer/" target="_blank">Graph API Explorer</a> → 取得長效型 Page Access Token（詳見說明）
+    </div>
+  </div>
+
+  <main class="main-content">
+
+    <!-- Summary Stats -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card" id="statTotal">
+          <div class="stat-icon yt-color">👍</div>
+          <div class="stat-body">
+            <div class="stat-value" id="totalLikes">—</div>
+            <div class="stat-label">總按讚數</div>
+          </div>
+          <div class="stat-trend up">↑</div>
+        </div>
+        <div class="stat-card" id="statTop">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-body">
+            <div class="stat-value" id="topLikes">—</div>
+            <div class="stat-label">最高按讚 (單影片)</div>
+          </div>
+        </div>
+        <div class="stat-card" id="statAvg">
+          <div class="stat-icon">📊</div>
+          <div class="stat-body">
+            <div class="stat-value" id="avgLikes">—</div>
+            <div class="stat-label">平均按讚數</div>
+          </div>
+        </div>
+        <div class="stat-card" id="statYT">
+          <div class="stat-icon yt-color">▶</div>
+          <div class="stat-body">
+            <div class="stat-value" id="ytTotal">—</div>
+            <div class="stat-label">YouTube 總按讚</div>
+          </div>
+        </div>
+        <div class="stat-card" id="statFB">
+          <div class="stat-icon fb-color">f</div>
+          <div class="stat-body">
+            <div class="stat-value" id="fbTotal">—</div>
+            <div class="stat-label">Facebook 總讚數</div>
+          </div>
+        </div>
+        <div class="stat-card" id="statCount">
+          <div class="stat-icon">🎬</div>
+          <div class="stat-body">
+            <div class="stat-value" id="videoCount">38</div>
+            <div class="stat-label">影片總數</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Row -->
+    <section class="charts-section">
+      <div class="chart-card chart-main">
+        <div class="chart-header">
+          <h2>按讚數排行榜</h2>
+          <div class="chart-controls">
+            <button class="chip active" onclick="setChartFilter('all', this)">全部</button>
+            <button class="chip" onclick="setChartFilter('youtube', this)">YouTube</button>
+            <button class="chip" onclick="setChartFilter('facebook', this)">Facebook</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="rankChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card chart-side">
+        <div class="chart-header">
+          <h2>平台分佈</h2>
+        </div>
+        <div class="chart-wrap donut-wrap">
+          <canvas id="platformChart"></canvas>
+        </div>
+        <div class="platform-legend" id="platformLegend"></div>
+      </div>
+    </section>
+
+    <!-- Video Table -->
+    <section class="table-section">
+      <div class="table-card">
+        <div class="table-header">
+          <h2>影片排行明細</h2>
+          <div class="table-controls">
+            <div class="search-box">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/></svg>
+              <input type="text" id="searchInput" placeholder="搜尋影片..." oninput="filterTable()" />
+            </div>
+            <div class="sort-controls">
+              <label>排序</label>
+              <select id="sortSelect" onchange="sortTable()">
+                <option value="likes-desc">按讚數 ↓</option>
+                <option value="likes-asc">按讚數 ↑</option>
+                <option value="rank">排名</option>
+                <option value="platform">平台</option>
+              </select>
+            </div>
+            <div class="platform-filter">
+              <select id="platformFilter" onchange="filterTable()">
+                <option value="all">所有平台</option>
+                <option value="youtube">YouTube</option>
+                <option value="facebook">Facebook</option>
+              </select>
+            </div>
+            <div class="sort-controls">
+              <label>手動模式</label>
+              <button class="chip" id="editModeBtn" onclick="toggleEditMode()">✏️ 編輯讚數</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap" id="tableWrap">
+          <table class="video-table" id="videoTable">
+            <thead>
+              <tr>
+                <th class="col-rank">排名</th>
+                <th class="col-thumb">縮圖</th>
+                <th class="col-title">影片標題</th>
+                <th class="col-platform">平台</th>
+                <th class="col-likes sortable" onclick="toggleSort()">
+                  按讚數 <span class="sort-arrow" id="sortArrow">↓</span>
+                </th>
+                <th class="col-bar">相對比例</th>
+                <th class="col-action">連結</th>
+                <th class="col-edit" id="editColHeader" style="display:none">手動輸入</th>
+              </tr>
+            </thead>
+            <tbody id="videoTableBody">
+              <!-- Generated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">正在載入影片數據...</div>
+          <div class="loading-sub" id="loadingProgress">0 / 38</div>
+        </div>
+
+        <!-- Facebook Auth Notice -->
+        <div class="fb-notice" id="fbNotice">
+          <div class="fb-notice-icon" id="fbNoticeIcon">ℹ️</div>
+          <div class="fb-notice-text" id="fbNoticeText">
+            <strong>Facebook 按讚數</strong>：尚未設定 Page Access Token，目前顯示<span class="demo-badge">模擬</span>數據。
+            請依照上方步驟取得長效型 Token 後輸入，即可顯示真實按讚數（<span id="fbLiveCount">0</span> / 19 支已取得真實數據）。
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
