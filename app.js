@@ -93,52 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTable();
   updateStats();
 
-  if (ytApiKey) document.getElementById('apiKeyInput').value = ytApiKey;
-  if (fbToken)  document.getElementById('fbTokenInput').value = fbToken;
+  // Always show demo data initially or if no local data exists
+  showDemoData();
 
-  if (ytApiKey || fbToken) {
-    showToast('已載入儲存的 API 憑證，開始更新資料…', 'info');
-    fetchAllData();
-  } else {
-    showDemoData();
-  }
-
-  // Auto-refresh every 5 minutes
+  // Auto-refresh every 5 minutes (demo mode)
   setInterval(() => {
-    if (ytApiKey || fbToken) fetchAllData();
+    showDemoData();
   }, 5 * 60 * 1000);
 });
 
-// ============================================================
-// API KEY & TOKEN
-// ============================================================
-function saveApiKey() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (!val.startsWith('AIza')) {
-    showToast('YouTube API 金鑰格式不正確，應以 AIza 開頭', 'error');
-    return;
-  }
-  ytApiKey = val;
-  localStorage.setItem('yt_api_key', val);
-  showToast('YouTube API 金鑰已儲存，開始載入資料…', 'success');
-  fetchAllData();
-}
-
-function saveFbToken() {
-  const val = document.getElementById('fbTokenInput').value.trim();
-  if (!val || val.length < 20) {
-    showToast('Facebook Token 格式不正確，請確認已複製完整 Token', 'error');
-    return;
-  }
-  fbToken = val;
-  localStorage.setItem('fb_page_token', val);
-  showToast('Facebook Page Token 已儲存，開始載入 FB 資料…', 'success');
-  fetchAllData();
-}
-
-function closeBanner() {
-  document.getElementById('apiBanner').style.display = 'none';
-}
 
 // ============================================================
 // DEMO DATA (when no API key)
@@ -244,7 +207,6 @@ async function fetchAllData() {
   renderTable();
   updateStats();
   updateCharts();
-  updateFbNotice();
   document.getElementById('lastUpdateTime').textContent = new Date().toLocaleTimeString('zh-TW');
   showToast('資料更新完成！', 'success');
 }
@@ -329,21 +291,6 @@ async function fetchFacebookBatch(fbVideos) {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 
-function updateFbNotice() {
-  const el = document.getElementById('fbNoticeText');
-  const countEl = document.getElementById('fbLiveCount');
-  const iconEl  = document.getElementById('fbNoticeIcon');
-  if (countEl) countEl.textContent = fbLiveCount;
-  if (fbLiveCount === 19 && el && iconEl) {
-    iconEl.textContent = '✅';
-    el.innerHTML = `<strong>Facebook 真實數據載入完成</strong>：所有 19 支影片按讚數已透過 Page Access Token 成功取得。`;
-    document.getElementById('fbNotice').style.background = 'rgba(16,185,129,0.07)';
-    document.getElementById('fbNotice').style.borderTopColor = 'rgba(16,185,129,0.2)';
-  } else if (fbLiveCount > 0 && el) {
-    iconEl.textContent = '⚠️';
-    el.innerHTML = `<strong>Facebook 部分取得</strong>：${fbLiveCount} / 19 支已取得真實按讚數，其餘顯示 <span class="demo-badge">模擬</span>。`;
-  }
-}
 
 function updateProgress() {
   document.getElementById('loadingProgress').textContent = `${fetchCount} / ${VIDEOS.length}`;

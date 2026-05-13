@@ -53,42 +53,6 @@
     </div>
   </header>
 
-  <!-- API Key Setup Banner -->
-  <div class="api-banner" id="apiBanner">
-    <div class="api-banner-inner">
-      <div class="api-banner-icon">▶</div>
-      <div class="api-banner-text">
-        <strong>YouTube API 金鑰</strong>
-        <span>Data API v3，取得 19 支 YouTube 影片按讚數</span>
-      </div>
-      <div class="api-input-area">
-        <input type="password" id="apiKeyInput" class="api-key-input" placeholder="AIzaSy..." autocomplete="off" />
-        <button class="api-save-btn yt-btn" onclick="saveApiKey()">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
-          套用
-        </button>
-      </div>
-      <div class="api-divider">｜</div>
-      <div class="api-banner-icon fb-icon">f</div>
-      <div class="api-banner-text">
-        <strong>Facebook Page Token</strong>
-        <span>長效型 Page Access Token，取得 19 支 FB 影片按讚數</span>
-      </div>
-      <div class="api-input-area">
-        <input type="password" id="fbTokenInput" class="api-key-input" placeholder="EAAxxxxxx..." autocomplete="off" />
-        <button class="api-save-btn fb-btn" onclick="saveFbToken()">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/></svg>
-          套用
-        </button>
-      </div>
-      <button class="api-banner-close" onclick="closeBanner()">✕</button>
-    </div>
-    <div class="api-hint">
-      ▶ YouTube：<a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a> → 建立 API 金鑰 → 啟用 YouTube Data API v3
-      &nbsp;｜&nbsp;
-      f Facebook：<a href="https://developers.facebook.com/tools/explorer/" target="_blank">Graph API Explorer</a> → 取得長效型 Page Access Token（詳見說明）
-    </div>
-  </div>
 
   <main class="main-content">
 
@@ -229,14 +193,6 @@
           <div class="loading-sub" id="loadingProgress">0 / 38</div>
         </div>
 
-        <!-- Facebook Auth Notice -->
-        <div class="fb-notice" id="fbNotice">
-          <div class="fb-notice-icon" id="fbNoticeIcon">ℹ️</div>
-          <div class="fb-notice-text" id="fbNoticeText">
-            <strong>Facebook 按讚數</strong>：尚未設定 Page Access Token，目前顯示<span class="demo-badge">模擬</span>數據。
-            請依照上方步驟取得長效型 Token 後輸入，即可顯示真實按讚數（<span id="fbLiveCount">0</span> / 19 支已取得真實數據）。
-          </div>
-        </div>
       </div>
     </section>
 
