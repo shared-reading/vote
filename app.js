@@ -1,8 +1,7 @@
 // ============================================================
 // VIDEO DATA & CONFIG
 // ============================================================
-// Optional: set to 'http://localhost:3001' if running scraper.js backend
-const SCRAPER_BACKEND_URL = localStorage.getItem('scraper_url') || '';
+
 const VIDEOS = [
   // YouTube (19)
   { id: 'KaowG0rxDLk', platform: 'youtube', url: 'https://www.youtube.com/watch?v=KaowG0rxDLk' },
@@ -222,10 +221,7 @@ async function fetchAllData() {
   }
 
   // ── Facebook ──
-  if (SCRAPER_BACKEND_URL) {
-    // Use local Playwright scraper backend
-    promises.push(fetchFacebookScraper(fbVideos));
-  } else if (fbToken) {
+  if (fbToken) {
     // Use Graph API with Page Access Token
     promises.push(fetchFacebookBatch(fbVideos));
   } else {
@@ -332,32 +328,6 @@ async function fetchFacebookBatch(fbVideos) {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-async function fetchFacebookScraper(fbVideos) {
-  // Call local scraper.js backend (Node.js + Playwright)
-  const ids = fbVideos.map(v => v.id).join(',');
-  try {
-    const res  = await fetch(`${SCRAPER_BACKEND_URL}/api/fb-scrape?ids=${ids}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
-    fbVideos.forEach(v => {
-      const result = data[v.id];
-      if (result) {
-        v.likes  = result.likes ?? 0;
-        v.title  = result.title || v.title || `Facebook 影片 ${v.id.slice(-6)}`;
-        v.status = result.status === 'live' ? 'live' : 'error';
-        if (result.status === 'live') fbLiveCount++;
-      }
-      fetchCount++;
-      updateProgress();
-    });
-  } catch (e) {
-    console.error('Scraper backend error:', e);
-    showToast(`爬蟲後端連線失敗：${e.message}`, 'error');
-    // Fall back to keeping existing data
-    fbVideos.forEach(v => { fetchCount++; updateProgress(); });
-  }
-}
 
 function updateFbNotice() {
   const el = document.getElementById('fbNoticeText');
